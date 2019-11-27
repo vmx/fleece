@@ -25,26 +25,23 @@
 #include "Doc.hh"
 #include "FleeceException.hh"
 
-using namespace fleece;
-using namespace fleece::impl;
-
 
 namespace fleece { namespace impl {
     struct FLEncoderImpl;
 } }
 
 // Define the public types as typedefs of the impl types:
-typedef const Value*    FLValue;
-typedef const Array*    FLArray;
-typedef const Dict*     FLDict;
-typedef ValueSlot*      FLSlot;
-typedef MutableArray*   FLMutableArray;
-typedef MutableDict*    FLMutableDict;
-typedef FLEncoderImpl*  FLEncoder;
-typedef SharedKeys*     FLSharedKeys;
-typedef Path*           FLKeyPath;
-typedef DeepIterator*   FLDeepIterator;
-typedef const Doc*      FLDoc;
+using FLValue = const fleece::impl::Value*;
+using FLArray = const fleece::impl::Array*;
+using FLDict = const fleece::impl::Dict*;
+using FLSlot = fleece::impl::ValueSlot*;
+using FLMutableArray = fleece::impl::MutableArray*;
+using FLMutableDict = fleece::impl::MutableDict*;
+using FLEncoder = fleece::impl::FLEncoderImpl*;
+using FLSharedKeys = fleece::impl::SharedKeys*;
+using FLKeyPath = fleece::impl::Path*;
+using FLDeepIterator = fleece::impl::DeepIterator*;
+using FLDoc = const fleece::impl::Doc*;
 
 #define FL_IMPL         // Prevents redefinition of the above types
 

@@ -7,6 +7,7 @@
 //
 
 #pragma once
+#include "FleeceUsings.hh"
 #include "NodeRef.hh"
 #include "PlatformCompat.hh"
 #include "RefCounted.hh"
@@ -16,9 +17,6 @@
 #include "betterassert.hh"
 
 namespace fleece { namespace hashtree {
-    using namespace std;
-
-
     using offset_t = int32_t;
 
 

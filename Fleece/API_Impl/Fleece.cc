@@ -24,6 +24,8 @@
 #include "JSON5.hh"
 #include "betterassert.hh"
 
+using namespace fleece::impl;
+using namespace fleece;
 
 namespace fleece { namespace impl {
 
