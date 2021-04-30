@@ -18,6 +18,13 @@
 NSString* const FLErrorDomain = @"Fleece";
 
 
+namespace fleece {
+    void Encoder::writeCF(CFTypeRef val) {
+        writeObjC((__bridge id)val);
+    }
+}
+
+
 NSMapTable* FLCreateSharedStringsTable(void) FLAPI {
     return Value::createSharedStringsTable();
 }

@@ -13,6 +13,8 @@ _kFLUndefinedValue
 _kFLEmptyArray
 _kFLEmptyDict
 
+_FLErrorDomain
+
 _FLSlice_Equal
 _FLSlice_Compare
 _FLSlice_ToCString
@@ -194,13 +196,22 @@ _FLEncodeJSONDelta
 _FLApplyJSONDelta
 _FLEncodeApplyingJSONDelta
 
+_FLValue_NewWithFormat
+_FLValue_NewWithFormatV
+_FLMutableArray_AppendWithFormat
+_FLMutableDict_SetWithFormat
+_FLValue_UpdateWithFormatV
+_FLEncoder_WriteWithFormat
+_FLEncoder_WriteWithFormatV
+
 # Fleece CF/Obj-C:
 _FLEncoder_WriteCFObject
 _FLValue_CopyCFObject
 _FLDict_GetWithCFString
+_FLValue_FromCFValue
+_FLSlot_SetCFValue
 _FLDictIterator_GetKeyAsNSString
 _FLEncoder_WriteNSObject
 _FLValue_GetNSObject
 _FLDict_GetWithNSString
 _FLCreateSharedStringsTable
-_FLErrorDomain

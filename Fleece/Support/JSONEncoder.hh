@@ -102,6 +102,9 @@ namespace fleece { namespace impl {
         void writeUndefined() {
             FleeceException::_throw(JSONError, "Cannot write `undefined` to JSON encoder");
         }
+        void vwritef(...) {
+            FleeceException::_throw(JSONError, "Not supported with JSON encoder");
+        }
 
     private:
         void writeDict(const Dict*);

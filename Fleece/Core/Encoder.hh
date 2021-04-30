@@ -19,6 +19,9 @@
 #include "SmallVector.hh"
 #include "function_ref.hh"
 
+#ifdef __APPLE__
+#include <CoreFoundation/CFBase.h>
+#endif
 
 namespace fleece { namespace impl {
     class SharedKeys;
@@ -98,6 +101,16 @@ namespace fleece { namespace impl {
             the callback can invoke the Encoder to write a different Value instead if it likes. */
         void writeValue(const Value* NONNULL v, WriteValueFunc fn)  {writeValue(v, &fn);}
 
+        /** Formatted write; a wrapper around \ref fleece::impl::builder::Write. */
+        void writef(const char *format, ...) __printflike(2, 3);
+
+        /** Formatted write; a wrapper around \ref fleece::impl::builder::VWrite. */
+        void vwritef(const char *format, va_list args);
+
+#ifdef __APPLE__
+        /** Writes a CoreFoundation value. Supports JSON-equivalent types, plus CFDataRef. */
+        void writeCF(CFTypeRef val);
+#endif
 #ifdef __OBJC__
         /** Writes an Objective-C object. Supported classes are the ones allowed by
             NSJSONSerialization, as well as NSData. */

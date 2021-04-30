@@ -469,6 +469,9 @@ namespace fleece {
         inline bool writeKey(Value);
         inline bool endDict();
 
+        inline bool writef(const char *fmt, ...);
+        inline bool vwritef(const char *fmt, va_list);
+
         template <class T>
         inline void write(slice_NONNULL key, T value)       {writeKey(key); *this << value;}
 
@@ -679,6 +682,18 @@ namespace fleece {
     inline void Encoder::reset()                {return FLEncoder_Reset(_enc);}
     inline FLError Encoder::error() const       {return FLEncoder_GetError(_enc);}
     inline const char* Encoder::errorMessage() const {return FLEncoder_GetErrorMessage(_enc);}
+
+    inline bool Encoder::writef(const char *fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        bool result = FLEncoder_WriteWithFormatV(_enc, fmt, args);
+        va_end(args);
+        return result;
+    }
+
+    inline bool Encoder::vwritef(const char *fmt, va_list args) {
+        return FLEncoder_WriteWithFormatV(_enc, fmt, args);
+    }
 
     // specialization for assigning bool value since there is no Encoder<<bool
     template<>

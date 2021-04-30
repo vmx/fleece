@@ -79,6 +79,9 @@ namespace fleece {
         /** Creates a new, empty mutable array. */
         static MutableArray newArray()          {return MutableArray(FLMutableArray_New(), false);}
 
+        static inline MutableArray newWithFormat(const char *format, ...) __printflike(1, 2);
+        static inline MutableArray newWithFormatV(const char *format, va_list);
+
         MutableArray()                          :Array() { }
         MutableArray(FLMutableArray a)          :Array((FLArray)FLMutableArray_Retain(a)) { }
         MutableArray(const MutableArray &a)     :Array((FLArray)FLMutableArray_Retain(a)) { }
@@ -127,6 +130,9 @@ namespace fleece {
         template <class T>
         void append(T v)                        {append() = v;}
 
+        inline void appendWithFormat(const char *format, ...) __printflike(2, 3);
+        inline void appendWithFormatV(const char *format, va_list);
+
         void insertNulls(uint32_t i, uint32_t n) {FLMutableArray_Insert(*this, i, n);}
 
         // This enables e.g. `array[10] = 17`
@@ -135,7 +141,6 @@ namespace fleece {
         }
 
         inline Value operator[] (int index) const {return get(index);} // const version
-
 
         inline MutableArray getMutableArray(uint32_t i);
         inline MutableDict getMutableDict(uint32_t i);
@@ -153,6 +158,9 @@ namespace fleece {
     class MutableDict : public Dict {
     public:
         static MutableDict newDict()            {return MutableDict(FLMutableDict_New(), false);}
+
+        static inline MutableDict newWithFormat(const char *format, ...) __printflike(1, 2);
+        static inline MutableDict newWithFormatV(const char *format, va_list);
 
         MutableDict()                           :Dict() { }
         MutableDict(FLMutableDict d)            :Dict((FLDict)d) {FLMutableDict_Retain(*this);}
@@ -188,6 +196,9 @@ namespace fleece {
 
         template <class T>
         void set(slice key, T v)                {set(key) = v;}
+
+        inline void setWithFormat(const char *format, ...) __printflike(2, 3);
+        inline void setWithFormatV(const char *format, va_list);
 
 
         // This enables e.g. `dict["key"_sl] = 17`
@@ -274,6 +285,53 @@ namespace fleece {
     inline MutableDict Dict::asMutable() const {
         return MutableDict(FLDict_AsMutable(*this));
     }
+
+    inline MutableArray MutableArray::newWithFormat(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
+        MutableArray array = newWithFormatV(format, args);
+        va_end(args);
+        return array;
+    }
+
+    inline MutableArray MutableArray::newWithFormatV(const char *format, va_list args) {
+        return Value(FLValue_NewWithFormatV(format, args)).asArray().asMutable();
+    }
+
+    inline MutableDict MutableDict::newWithFormat(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
+        MutableDict dict = newWithFormatV(format, args);
+        va_end(args);
+        return dict;
+    }
+
+    inline MutableDict MutableDict::newWithFormatV(const char *format, va_list args) {
+        return Value(FLValue_NewWithFormatV(format, args)).asDict().asMutable();
+    }
+
+    inline void MutableArray::appendWithFormat(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
+        appendWithFormatV(format, args);
+        va_end(args);
+    }
+
+    inline void MutableArray::appendWithFormatV(const char *format, va_list args) {
+        FLValue_UpdateWithFormatV(_val, format, args);
+    }
+
+    inline void MutableDict::setWithFormat(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
+        setWithFormatV(format, args);
+        va_end(args);
+    }
+
+    inline void MutableDict::setWithFormatV(const char *format, va_list args) {
+        FLValue_UpdateWithFormatV(_val, format, args);
+    }
+
 
 }
 

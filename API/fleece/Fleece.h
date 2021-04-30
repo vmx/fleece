@@ -15,6 +15,7 @@
 #define _FLEECE_H
 
 #include "FLSlice.h"
+#include <stdarg.h>
 #include <stdio.h>
 
 // On Windows, FLEECE_PUBLIC marks symbols as being exported from the shared library.
@@ -1228,6 +1229,67 @@ while (NULL != (value = FLDictIterator_GetValue(&iter))) {
     const char* FLEncoder_GetErrorMessage(FLEncoder NONNULL) FLAPI;
 
     /** @} */
+    /** @} */
+
+
+    //////// FORMATTED VALUE BUILDER
+
+
+    /** \defgroup builder   Fleece Formatted Value Builder
+         @{
+        These functions use the `printf` idiom to make it convenient to create structured Fleece
+        values in memory with one call. They create or modify a `FLMutableArray` or `FLMutableDict
+        by reading the given format string and the following arguments.
+
+        The format string is basically JSON5, except that any value in it may be a printf-style
+        '%' specifier instead of a literal, in which case that value will be read from the next
+        argument. The supported format specifiers are:
+
+        - Boolean:           `%c` (cast the arg to `char` to avoid a compiler warning)
+        - Integer:           `%i` or `%d` (use size specifiers `l`, `ll`, or `z`)
+        - Unsigned integer:  `%u` (use size specifiers `l`, `ll`, or `z`)
+        - Floating point:    `%f` (arg can be `float` or `double`; no size spec needed)
+        - C string:          `%s`
+        - Ptr+length string: `%.*s` (takes two args, a `const char*` and an `int`. See `FMTSLICE`.)
+        - Fleece value:      `%p` (arg must be a `FLValue`)
+
+        A `-` can appear after the `%`, indicating that the argument should be ignored if it has
+        a default value, namely `false`, 0, or an empty string. This means the corresponding item
+        won't be written.
+
+        If a string/value specifier is given a NULL pointer, it's ignored and nothing is written.
+      */
+
+    /** Translates the JSON-style format string into a tree of mutable Fleece objects, adding
+        values from the following arguments wherever a printf-style `%` specifier appears.
+        \note  The result will be either an `FLMutableArray` or `FLMutableString` depending on
+                the syntax of the format string.
+        \warning  The returned value must be released when you're done with it. */
+    FLValue FLValue_NewWithFormat(const char *format, ...) FLAPI __printflike(1, 2);
+
+    /** Variant of \ref FLValue_NewWithFormat that takes a pre-existing `va_list`. */
+    FLValue FLValue_NewWithFormatV(const char *format, va_list args) FLAPI;
+
+    /** Like \ref FLValue_NewWithFormat, except it operates on an existing mutable array.
+        The values parsed from the format string and arguments will be appended to it. */
+    void FLMutableArray_AppendWithFormat(FLMutableArray, const char *format, ...) FLAPI __printflike(2, 3);
+
+    /** Like \ref FLValue_NewWithFormat, except it operates on an existing mutable dict.
+        Pre-existing properties not appearing in the format string are preserved.
+        \note If an argument is ignored (see the formatting docs), as a side effect any pre-existing
+              value for that key is removed. */
+    void FLMutableDict_SetWithFormat(FLMutableDict, const char *format, ...) FLAPI __printflike(2, 3);
+
+    /** Like \ref FLMutableArray_AppendWithFormat and \ref FLMutableDict_SetWithFormat
+        but takes a pre-existing `va_list`. */
+    void FLValue_UpdateWithFormatV(FLValue, const char *format, va_list args) FLAPI;
+
+    /** Writes a formatted value to an encoder. */
+    bool FLEncoder_WriteWithFormat(FLEncoder enc, const char *format, ...) FLAPI __printflike(2, 3);
+
+    /** Writes a formatted value to an encoder. */
+    bool FLEncoder_WriteWithFormatV(FLEncoder enc, const char *format, va_list args) FLAPI;
+
     /** @} */
 
 
